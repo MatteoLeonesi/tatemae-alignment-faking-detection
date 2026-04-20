@@ -1,0 +1,13 @@
+[project]
+name = "af_benchmark"
+version = "0.1.0"
+description = "Add your description here"
+requires-python = ">=3.13"
+dependencies = [
+    "ollama>=0.6.1",
+    "openai>=2.8.1",
+    "pandas>=2.3.3",
+    "pandas-stubs==2.3.2.250926",
+    "python-dotenv>=1.2.2",
+    "tqdm>=4.67.1",
+]
