@@ -87,7 +87,7 @@ Experiment models are called through OpenRouter. The judge model (GPT-5.4-mini) 
 
 ```bibtex
 @inproceedings{tatemae2026,
-  title={Detecting Alignment Faking via Tool Selection in LLMs: A Controlled Evaluation Framework},
+  title={Tatemae: Detecting Alignment Faking via Tool Selection in LLMs},
   author={...},
   booktitle={NeurIPS},
   year={2026}
