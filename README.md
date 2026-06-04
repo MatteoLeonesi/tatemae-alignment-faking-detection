@@ -1,6 +1,10 @@
 # Tatemae: Detecting Alignment Faking via Tool Selection in LLMs
-
-Code and dataset for the paper *Detecting Alignment Faking via Tool Selection in LLMs: A Controlled Evaluation Framework*.
+<p align="center">
+  <a href="https://arxiv.org/abs/2604.26511"><img src="https://img.shields.io/badge/arXiv-2604.26511-b31b1b.svg" alt="Paper"></a>
+  <a href="https://huggingface.co/datasets/ML0037/tatemae-af"><img src="https://img.shields.io/badge/🤗%20Dataset-Hugging%20Face-yellow" alt="Dataset"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/Code-MIT-blue.svg" alt="MIT License"></a>
+  <a href="https://creativecommons.org/licenses/by/4.0/"><img src="https://img.shields.io/badge/Dataset-CC--BY--4.0-green.svg" alt="CC-BY-4.0"></a>
+</p>
 
 ## Overview
 
