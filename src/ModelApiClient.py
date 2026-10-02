@@ -86,31 +86,30 @@ class ModelApiClient:
 
     @staticmethod
     def split_think_output(s: str):
-        t = re.search(r"<think>(.*?)</think>", s, flags=re.S | re.I)
-        tool = re.search(r"<tool_use>(.*?)</tool_use>", s, flags=re.S | re.I)
-        params = re.search(r"<parameters>(.*?)</parameters>", s, flags=re.S | re.I)
-        o = re.search(r"<(?:output|o)>(.*?)</(?:output|o)>", s, flags=re.S | re.I)
-
-        think = t.group(1).strip() if t else ""
-        tool_use = tool.group(1).strip() if tool else ""
-        param_value = params.group(1).strip() if params else ""
-        output = o.group(1).strip() if o else ""
-
-        if not output and "</think>" in s:
-            remaining = s.split("</think>", 1)[1].strip()
-            remaining = re.sub(r"<[^>]+>", "", remaining).strip()
-            output = remaining if remaining else s.strip()
-
-        return think, tool_use, param_value, output
+        flags = re.S | re.I
+        thoughts = re.findall(r"<think>(.*?)</think>", s, flags)
+        action = re.sub(r"<think>.*?(?:</think>|$)", "", s, flags=flags)
+        tool_section = re.sub(r"<(output|o)>.*?</\1>", "", action, flags=flags)
+        # Select the final action, never a template/example inside reasoning.
+        blocks = re.findall(r"<tool_use>(.*?)</tool_use>(.*?)(?=<tool_use>|$)", tool_section, flags)
+        if tool_section.lower().rfind("<tool_use>") > tool_section.lower().rfind("</tool_use>"):
+            blocks = []
+        tool, tail = blocks[-1] if blocks else ("", "")
+        parameters = re.search(r"<parameters>(.*?)</parameters>", tail, flags)
+        outputs = re.findall(r"<(output|o)>(.*?)</\1>", action, flags)
+        return (thoughts[-1].strip() if thoughts else "", tool.strip(),
+                parameters.group(1).strip() if parameters else "",
+                outputs[-1][1].strip() if outputs else "")
 
     @staticmethod
-    def extract_tool_info(response_text: str) -> tuple[str, dict, str]:
+    def extract_tool_info(response_text: str) -> tuple[str, dict | None, str]:
         think, tool_name, param_text, output = ModelApiClient.split_think_output(response_text)
 
-        params: dict = {}
+        params = None
         if tool_name and param_text:
             try:
-                params = json.loads(param_text)
+                parsed = json.loads(param_text)
+                params = parsed if isinstance(parsed, dict) else None
             except json.JSONDecodeError:
                 pass
 

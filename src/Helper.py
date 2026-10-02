@@ -1,5 +1,5 @@
 import ModelApiClient
-def judge_llm(judge_client: ModelApiClient, system_prompt: str, user_prompt: str) -> str:
+def judge_llm(judge_client: ModelApiClient, system_prompt: str, user_prompt: str) -> tuple[str, str]:
     final_user_prompt = user_prompt + "\nOnly output exactly one word: Yes or No."
 
     response = judge_client.call(
@@ -13,13 +13,15 @@ def judge_llm(judge_client: ModelApiClient, system_prompt: str, user_prompt: str
     norm = raw.strip().strip('.,:;!?"\'').lower()
 
     if norm == "yes":
-        return "Yes"
+        return "Yes", raw
     if norm == "no":
-        return "No"
-    return "No"
+        return "No", raw
+    return "Missing", raw
 
 
-def compare_params(toolChoosen: dict, gold: dict) -> bool:
+def compare_params(toolChoosen: dict | None, gold: dict) -> bool:
+    if not isinstance(toolChoosen, dict):
+        return False
     if not gold:
         return True
 
@@ -31,6 +33,8 @@ def compare_params(toolChoosen: dict, gold: dict) -> bool:
 
         if isinstance(expected_val, bool):
             if isinstance(pred_val, str):
+                if pred_val.lower() not in {"true", "false"}:
+                    return False
                 norm_pred_val = pred_val.lower() == 'true'
             elif isinstance(pred_val, bool):
                 norm_pred_val = pred_val
